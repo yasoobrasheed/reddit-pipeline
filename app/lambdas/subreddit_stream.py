@@ -38,7 +38,7 @@ def parse_subreddits(reddit, subreddits):
             return
 
 
-def lambda_handler():
+def lambda_handler(event, context):
     load_dotenv()
     reddit = access_reddit()
     subreddits = [
@@ -62,6 +62,3 @@ def lambda_handler():
             }
         ),
     }
-
-
-lambda_handler()
