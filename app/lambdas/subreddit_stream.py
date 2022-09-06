@@ -6,10 +6,12 @@ from dotenv import load_dotenv
 
 
 def access_reddit():
-    USER_AGENT = os.environ["APP_NAME"] + "/0.1 by /u/" + os.environ["USERNAME"]
+    USER_AGENT = (
+        os.environ["REDDIT_APP_NAME"] + "/0.1 by /u/" + os.environ["REDDIT_USERNAME"]
+    )
     return praw.Reddit(
-        client_id=os.environ["APP_ID"],
-        client_secret=os.environ["APP_SECRET"],
+        client_id=os.environ["REDDIT_APP_ID"],
+        client_secret=os.environ["REDDIT_APP_SECRET"],
         user_agent=USER_AGENT,
     )
 
@@ -28,24 +30,38 @@ def parse_subreddits(reddit, subreddits):
             print("subreddit: " + str(submission.subreddit))
             print("title: " + str(submission.title))
             print("author: " + str(submission.author))
+            print("url:  " + str(submission.url))
+            print("submission_id:  " + str(submission.id))
             print("created:  " + str(created_utc))
+
         else:
             return
 
 
-def lambda_handler(event, context):
+def lambda_handler():
     load_dotenv()
     reddit = access_reddit()
-    SUBREDDITS = "news+worldnews+politics"
-    parse_subreddits(reddit, SUBREDDITS)
+    subreddits = [
+        "news",
+        "worldnews",
+        "politics",
+        "stocks",
+        "stockmarket",
+        "wallstreetbets",
+        "cryptocurrency",
+        "bitcoin",
+    ]
+    subreddits = "+".join(subreddits)
+    parse_subreddits(reddit, subreddits)
 
     return {
         "statusCode": 200,
         "body": json.dumps(
             {
-                "message": "Successfully streamed all new reddit posts from "
-                + SUBREDDITS
-                + " in the past 5 minutes."
+                "message": "Successfully streamed all new reddit posts in the past 5 minutes."
             }
         ),
     }
+
+
+lambda_handler()
