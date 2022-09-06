@@ -35,7 +35,7 @@ Resources:
     Type: AWS::SQS::Queue
     Description: Process messages from subreddit-stream-function
     Properties:
-      QueueName: subreddit-stream-queue
+      QueueName: subreddit-stream-queue.fifo
       FifoQueue: true
 
 Outputs:

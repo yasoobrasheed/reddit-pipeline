@@ -23,8 +23,9 @@ def parse_subreddits(reddit, subreddits):
     subreddit = reddit.subreddit(subreddits)
     last_five_minutes_utc = datetime.utcnow() - timedelta(minutes=5)
 
+    SUBREDDIT_STREAM_FIFO_QUEUE_NAME = "subreddit-stream-queue.fifo"
     sqs = boto3.resource("sqs")
-    queue = sqs.get_queue_by_name(QueueName="subreddit-stream-queue")
+    queue = sqs.get_queue_by_name(QueueName=SUBREDDIT_STREAM_FIFO_QUEUE_NAME)
 
     for submission in subreddit.new(limit=100):
         created_utc = datetime.utcfromtimestamp(submission.created_utc)
