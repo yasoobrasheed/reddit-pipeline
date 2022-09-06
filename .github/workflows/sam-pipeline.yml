@@ -7,9 +7,7 @@ on:
 jobs:
   build-sam-template:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+    environment: reddit-pipeline
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
