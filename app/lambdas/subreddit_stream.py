@@ -7,11 +7,10 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 
-def send_message(queue, message_body, message_attributes={}):
+def send_message(queue, message_body):
     try:
-        response = queue.send_message(
-            MessageBody=message_body, MessageAttributes=message_attributes
-        )
+        print(message_body)
+        response = queue.send_message(MessageBody=message_body)
     except ClientError as error:
         print("Send message failed: %s", message_body)
         raise error
@@ -23,7 +22,7 @@ def parse_subreddits(reddit, subreddits):
     subreddit = reddit.subreddit(subreddits)
     last_five_minutes_utc = datetime.utcnow() - timedelta(minutes=5)
 
-    SUBREDDIT_STREAM_FIFO_QUEUE_NAME = "subreddit-stream-queue.fifo"
+    SUBREDDIT_STREAM_FIFO_QUEUE_NAME = "subreddit-stream-queue"
     sqs = boto3.resource("sqs")
     queue = sqs.get_queue_by_name(QueueName=SUBREDDIT_STREAM_FIFO_QUEUE_NAME)
 
@@ -32,16 +31,19 @@ def parse_subreddits(reddit, subreddits):
         was_created_in_last_five_minutes = last_five_minutes_utc <= created_utc
 
         if was_created_in_last_five_minutes:
-            message_body = {
-                "subreddit": str(submission.subreddit),
-                "title": str(submission.title),
-                "author": str(submission.author),
-                "url": str(submission.url),
-                "submission_id": str(submission.id),
-                "created": str(created_utc),
-            }
+            message_body = json.dumps(
+                {
+                    "subreddit": str(submission.subreddit),
+                    "title": str(submission.title),
+                    "author": str(submission.author),
+                    "url": str(submission.url),
+                    "submission_id": str(submission.id),
+                    "created": str(created_utc),
+                }
+            )
             print(message_body)
-            send_message(queue, message_body)
+            queue.send_message(MessageBody=message_body)
+            # send_message(queue, message_body)
         else:
             return
 
