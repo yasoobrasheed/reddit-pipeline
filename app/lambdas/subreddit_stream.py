@@ -40,9 +40,8 @@ def parse_subreddits(reddit, subreddits):
                 "submission_id": str(submission.id),
                 "created": str(created_utc),
             }
-            response = send_message(queue, message_body)
-            print(response.get("MessageId"))
-            print(response.get("MD5OfMessageBody"))
+            print(message_body)
+            send_message(queue, message_body)
         else:
             return
 

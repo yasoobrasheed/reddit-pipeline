@@ -15,6 +15,7 @@ Globals:
 Resources:
   SubredditStreamFunction:
     Type: AWS::Serverless::Function
+    DeletionPolicy: Retain
     Properties:
       FunctionName: subreddit-stream-function
       CodeUri: app/lambdas/
@@ -30,13 +31,15 @@ Resources:
           Name: Every5min
           Type: Schedule
           Properties:
-            Schedule: rate(5 minutes)         
+            Schedule: rate(5 minutes) 
+
   SubredditStreamQueue:
     Type: AWS::SQS::Queue
     Description: Process messages from subreddit-stream-function
+    DeletionPolicy: Retain
     Properties:
-      QueueName: subreddit-stream-queue.fifo
       FifoQueue: true
+      QueueName: subreddit-stream-queue.fifo
 
 Outputs:
   SubredditStreamApi:
