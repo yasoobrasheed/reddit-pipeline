@@ -1,0 +1,20 @@
+name: Database Workflow
+on:
+  push:
+    branches:
+      - 'main'
+    pull_request:
+jobs:
+  run-db-migrations:
+    runs-on: ubuntu-latest
+    environment: reddit-pipeline
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - uses: aws-actions/setup-sam@v2
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install alembic
+      # run database migrations
+      - run: alembic upgrade head

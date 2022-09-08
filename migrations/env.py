@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+DB_CONN_STRING = f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_ENDPOINT']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}?sslmode=require"
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -43,9 +45,8 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    db_conn_string = f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_ENDPOINT']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}?sslmode=require"
     context.configure(
-        url=db_conn_string,
+        url=DB_CONN_STRING,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -62,8 +63,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    db_conn_string = f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_ENDPOINT']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}?sslmode=require"
-    config.set_main_option("sqlalchemy.url", db_conn_string)
+    config.set_main_option("sqlalchemy.url", DB_CONN_STRING)
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",

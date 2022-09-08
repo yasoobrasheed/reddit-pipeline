@@ -1,4 +1,4 @@
-name: AWS SAM Pipeline
+name: AWS SAM Workflow
 on:
   push:
     branches:
