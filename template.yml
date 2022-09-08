@@ -11,6 +11,11 @@ Globals:
         REDDIT_USERNAME: Impressive_Being_607
         REDDIT_APP_SECRET: '{{resolve:secretsmanager:reddit_secrets:SecretString:REDDIT_APP_SECRET}}'
         REDDIT_APP_ID: '{{resolve:secretsmanager:reddit_secrets:SecretString:REDDIT_APP_ID}}'
+        DB_USERNAME: '{{resolve:secretsmanager:reddit_secrets:SecretString:DB_USERNAME}}'
+        DB_PASSWORD: '{{resolve:secretsmanager:reddit_secrets:SecretString:DB_PASSWORD}}'
+        DB_ENDPOINT: '{{resolve:secretsmanager:reddit_secrets:SecretString:DB_ENDPOINT}}'
+        DB_PORT: '{{resolve:secretsmanager:reddit_secrets:SecretString:DB_PORT}}'
+        DB_NAME: '{{resolve:secretsmanager:reddit_secrets:SecretString:DB_NAME}}'
 
 Resources:
   # LAMBDA
