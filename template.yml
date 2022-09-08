@@ -13,6 +13,7 @@ Globals:
         REDDIT_APP_ID: '{{resolve:secretsmanager:reddit_secrets:SecretString:REDDIT_APP_ID}}'
 
 Resources:
+  # LAMBDA
   SubredditStreamFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -21,22 +22,44 @@ Resources:
       Handler: subreddit_stream.lambda_handler
       Runtime: python3.8
       Timeout: 60
-      Role: !GetAtt SubredditStreamFunctionRole.Arn
+      Role: !GetAtt MyDataPipelineLambdaFunctionRole.Arn
       Events:
         ScheduledEvent:
           Name: Every5min
           Type: Schedule
           Properties:
             Schedule: rate(5 minutes) 
-
-  SubredditStreamFunctionRole:
+  WriteSubredditToDBFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: write-subreddit-to-db-function
+      CodeUri: app/lambdas/
+      Handler: write_subreddit_stream_to_db.lambda_handler
+      Runtime: python3.8
+      Timeout: 30
+      Role: !GetAtt MyDataPipelineLambdaFunctionRole.Arn
+      Events:
+        SubredditStreamQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SubredditStreamQueue.Arn
+            BatchSize: 10
+  # SQS
+  SubredditStreamQueue:
+    Type: AWS::SQS::Queue
+    Description: Process messages from subreddit-stream-function
+    Properties:
+      QueueName: subreddit-stream-queue
+  # ROLE
+  MyDataPipelineLambdaFunctionRole:
     Type: AWS::IAM::Role
     Properties:
       Path: /
-      RoleName: !Sub "${AWS::StackName}-SubredditStreamFunctionRole"
+      RoleName: !Sub "${AWS::StackName}-MyDataPipelineLambdaFunctionRole"
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
         - 'arn:aws:iam::aws:policy/AmazonSQSFullAccess'
+        - 'arn:aws:iam::aws:policy/AmazonRDSFullAccess'
       AssumeRolePolicyDocument:
         Statement:
           - 
@@ -45,9 +68,3 @@ Resources:
               Service: lambda.amazonaws.com
             Action:
               - 'sts:AssumeRole'
-
-  SubredditStreamQueue:
-    Type: AWS::SQS::Queue
-    Description: Process messages from subreddit-stream-function
-    Properties:
-      QueueName: subreddit-stream-queue
