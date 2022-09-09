@@ -14,18 +14,21 @@ def read_and_write_records(event):
             payload = record["body"]
             print(str(payload))
 
+            print(payload["subreddit"])
+            print(payload.subreddit)
+
             submission = Submission(
-                subreddit=record["body"]["subreddit"],
-                title=record["body"]["title"],
-                author=record["body"]["author"],
-                url=record["body"]["url"],
-                submission_id=record["body"]["submission_id"],
-                submission_created_at=record["body"]["submission_created_at"],
+                subreddit=payload["subreddit"],
+                title=payload["title"],
+                author=payload["author"],
+                url=payload["url"],
+                submission_id=payload["submission_id"],
+                submission_created_at=payload["submission_created_at"],
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
             )
-            session.add(submission)
-            session.commit()
+            # session.add(submission)
+            # session.commit()
 
 
 def lambda_handler(event, context):
