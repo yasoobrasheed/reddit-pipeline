@@ -26,7 +26,7 @@ def parse_subreddits(reddit, subreddits):
                     "author": str(submission.author),
                     "url": str(submission.url),
                     "submission_id": str(submission.id),
-                    "submission_created": str(created_utc),
+                    "submission_created_at": str(created_utc),
                 }
             )
             print(message_body)
