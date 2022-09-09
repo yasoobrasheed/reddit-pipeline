@@ -6,7 +6,7 @@ from datetime import datetime
 
 def read_and_write_records(event):
     session = create_session()
-    print(event["Records"])
+    event = json.loads(event)
 
     with session.begin():
         for record in event["Records"]:
