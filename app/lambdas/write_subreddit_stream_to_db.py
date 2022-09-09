@@ -10,11 +10,8 @@ def read_and_write_records(event):
     with session.begin():
         for record in event["Records"]:
             print("--- test consumption ---")
-            payload = record["body"]
+            payload = json.loads(record["body"])
             print(str(payload))
-
-            print(payload["subreddit"])
-            print(payload.subreddit)
 
             submission = Submission(
                 subreddit=payload["subreddit"],
