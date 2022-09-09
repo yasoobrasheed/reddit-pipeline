@@ -6,7 +6,6 @@ from datetime import datetime
 
 def read_and_write_records(event):
     session = create_session()
-    event = json.loads(event)
 
     with session.begin():
         for record in event["Records"]:
@@ -27,8 +26,8 @@ def read_and_write_records(event):
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
             )
-            # session.add(submission)
-            # session.commit()
+            session.add(submission)
+            session.commit()
 
 
 def lambda_handler(event, context):
